@@ -1,5 +1,5 @@
 import React from "react";
-import { Store } from './Store'
+import { Store, IAction } from './Store'
 
 interface IEpisode {
   airdate: string,
@@ -27,21 +27,32 @@ export default function App(): JSX.Element {
       payload: dataJSON._embedded.episodes
     })
   }
+
+  const toggleFavAction = (episode:IEpisode) => dispatch({
+    type: 'ADD_FAV',
+    payload: episode
+  })
+
   return (
     <React.Fragment>
-      <h1>The Office</h1>
-      <p>Pick your favorite episode!</p>
-      <section>
+      <header className="header">
+        <h1>The Office</h1>
+        <p>Pick your favorite episode!</p>
+      </header>
+      <section className="episode-layout">
         {state.episodes.map((episode: IEpisode) => {
           return (
-            <section key={episode.id}>
+            <section key={episode.id} className="episode-box">
               <img
                 alt={`The Office ${episode.name}`}
                 src={episode.image && episode.image.medium}
               />
               <h3>{episode.name}</h3>
               <section>
-                Season: {episode.season} Number: {episode.number}
+                <div>
+                  Season: {episode.season} Number: {episode.number}
+                </div>
+                <button type="button" onClick={()=>toggleFavAction(episode)}> Fav </button>
               </section>
             </section>
           );
