@@ -1,14 +1,16 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
+import React from "react";
+import ReactDOM from "react-dom";
+import App from './App';
+import StoreProvider from "./Store";
 
-export default function App(): JSX.Element {
+export default function Index(): JSX.Element {
   return (
-    <h1>
-      Hello
-    </h1>
-  )
+    <StoreProvider>
+      <App />
+    </StoreProvider>
+  );
 }
 
-const root = document.getElementById('app-root')
+const root = document.getElementById("app-root");
 
-ReactDOM.render(<App />, root)
+ReactDOM.render(<Index />, root);
