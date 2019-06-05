@@ -1,15 +1,6 @@
 import React from 'react'
 import { arrowFunctionExpression } from '@babel/types';
-
-interface IState {
-  episodes: [],
-  favorites: []
-}
-
-export interface IAction {
-  type: string,
-  payload: any
-}
+import { IState, IAction } from './interfaces';
 
 const initialState: IState = {
   episodes: [],
@@ -22,6 +13,10 @@ function reducer(state: IState, action: IAction) {
   switch (action.type) {
     case 'FETCH_DATA':
       return { ...state, episodes: action.payload }
+    case 'ADD_FAV':
+      return { ...state, favorites: [...state.favorites, action.payload]}
+    case 'REMOVE_FAV':
+      return { ...state, favorites: [action.payload] }
     default:
       return state
   }

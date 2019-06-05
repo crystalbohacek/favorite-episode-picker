@@ -1,16 +1,6 @@
 import React from "react";
-import { Store, IAction } from './Store'
-
-interface IEpisode {
-  airdate: string,
-  id: number,
-  image: { medium: string, original: string },
-  name: string,
-  number: number,
-  season: number,
-  summary: string,
-  url: string
-}
+import { Store } from './Store'
+import { IAction, IEpisode } from './interfaces'
 
 export default function App(): JSX.Element {
   const URL = 
@@ -28,10 +18,23 @@ export default function App(): JSX.Element {
     })
   }
 
-  const toggleFavAction = (episode:IEpisode) => dispatch({
-    type: 'ADD_FAV',
-    payload: episode
-  })
+  const toggleFavAction = (episode: IEpisode): IAction => {
+    const episodeInFav = state.favorites.includes(episode)
+    let dispatchObj = {
+      type: "ADD_FAV",
+      payload: episode
+    };
+    if (episodeInFav){
+      const favWithoutEpisode = state.favorites.filter((fav: IEpisode) => fav.id !== episode.id)
+      dispatchObj = {
+        type: "REMOVE_FAV",
+        payload: favWithoutEpisode
+      };
+    }
+    return dispatch(dispatchObj)
+  }
+
+  console.log(state)
 
   return (
     <React.Fragment>
@@ -52,7 +55,9 @@ export default function App(): JSX.Element {
                 <div>
                   Season: {episode.season} Number: {episode.number}
                 </div>
-                <button type="button" onClick={()=>toggleFavAction(episode)}> Fav </button>
+                <button type="button" onClick={()=>toggleFavAction(episode)}>  
+                  {state.favorites.find((fav:IEpisode) => fav.id === episode.id) ? "Unfav" : "Fav"}
+                </button>
               </section>
             </section>
           );
