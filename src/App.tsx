@@ -1,68 +1,65 @@
 import React from "react";
-import { Store } from './Store'
-import { IAction, IEpisode } from './interfaces'
+import { Store } from "./Store";
+import { IAction, IEpisode } from "./interfaces";
+
+const EpisodesList = React.lazy<any>(() => import("./EpisodesList"));
 
 export default function App(): JSX.Element {
-  const URL = 
+  const URL =
     "https://api.tvmaze.com/singlesearch/shows?q=the-office&embed=episodes";
-  const {state, dispatch} = React.useContext(Store)
+  const { state, dispatch } = React.useContext(Store);
   React.useEffect(() => {
-    state.episodes.length === 0 && fetchDataAction()
-  })
+    state.episodes.length === 0 && fetchDataAction();
+  });
   const fetchDataAction = async () => {
-    const data = await fetch(URL)
-    const dataJSON = await data.json()
+    const data = await fetch(URL);
+    const dataJSON = await data.json();
     return dispatch({
-      type: 'FETCH_DATA',
+      type: "FETCH_DATA",
       payload: dataJSON._embedded.episodes
-    })
-  }
+    });
+  };
 
   const toggleFavAction = (episode: IEpisode): IAction => {
-    const episodeInFav = state.favorites.includes(episode)
+    const episodeInFav = state.favorites.includes(episode);
     let dispatchObj = {
       type: "ADD_FAV",
       payload: episode
     };
-    if (episodeInFav){
-      const favWithoutEpisode = state.favorites.filter((fav: IEpisode) => fav.id !== episode.id)
+    if (episodeInFav) {
+      const favWithoutEpisode = state.favorites.filter(
+        (fav: IEpisode) => fav.id !== episode.id
+      );
       dispatchObj = {
         type: "REMOVE_FAV",
         payload: favWithoutEpisode
       };
     }
-    return dispatch(dispatchObj)
-  }
+    return dispatch(dispatchObj);
+  };
 
-  console.log(state)
+  const props = {
+    episodes: state.episodes,
+    toggleFavAction: toggleFavAction,
+    favorites: state.favorites
+  };
 
   return (
     <React.Fragment>
       <header className="header">
-        <h1>The Office</h1>
-        <p>Pick your favorite episode!</p>
+        <div>
+          <h1>The Office</h1>
+          <p>Pick your favorite episode!</p>
+        </div>
+        <div className="favorites-display">
+          Favorites: {state.favorites.length}
+        </div>
       </header>
-      <section className="episode-layout">
-        {state.episodes.map((episode: IEpisode) => {
-          return (
-            <section key={episode.id} className="episode-box">
-              <img
-                alt={`The Office ${episode.name}`}
-                src={episode.image && episode.image.medium}
-              />
-              <h3>{episode.name}</h3>
-              <section>
-                <div>
-                  Season: {episode.season} Number: {episode.number}
-                </div>
-                <button type="button" onClick={()=>toggleFavAction(episode)}>  
-                  {state.favorites.find((fav:IEpisode) => fav.id === episode.id) ? "Unfav" : "Fav"}
-                </button>
-              </section>
-            </section>
-          );
-        })}
-      </section>
+      <React.Suspense fallback={<div>Loading...</div>}>
+        <section className="episode-layout">
+          <EpisodesList {...props} />
+        </section>
+      </React.Suspense>
     </React.Fragment>
   );
 }
