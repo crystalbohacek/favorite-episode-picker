@@ -11,7 +11,7 @@ export const fetchDataAction = async (dispatch: any) => {
   });
 };
 
-export const toggleFavAction = (state:IState, dispatch: any, episode: IEpisode | any): IAction => {
+export const toggleFavAction = (state: IState, dispatch: any, episode: IEpisode | any): IAction =>  {
   const episodeInFav = state.favorites.includes(episode);
   let dispatchObj = {
     type: "ADD_FAV",
@@ -20,11 +20,12 @@ export const toggleFavAction = (state:IState, dispatch: any, episode: IEpisode |
   if (episodeInFav) {
     const favWithoutEpisode = state.favorites.filter(
       (fav: IEpisode) => fav.id !== episode.id
-    );
+    )
     dispatchObj = {
-      type: "REMOVE_FAV",
+      type: 'REMOVE_FAV',
       payload: favWithoutEpisode
-    };
+    }
   }
-  return dispatch(dispatchObj);
-};
+
+  return dispatch(dispatchObj)
+}
